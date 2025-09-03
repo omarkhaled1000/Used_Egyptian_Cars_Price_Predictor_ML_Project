@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Car Price Predictor</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:#0b1220; color:#e6eef7; margin:0; }
+    .container { max-width: 900px; margin: 40px auto; padding: 24px; background:#121a2a; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    h1 { margin-top:0; }
+    form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .field { display:flex; flex-direction:column; gap:6px; }
+    label { font-size: 14px; color:#b8c7da; }
+    input, select { padding:10px 12px; border-radius:10px; border:1px solid #2a3955; background:#0e1726; color:#e6eef7; }
+    button { grid-column: 1 / -1; padding: 12px 16px; border:0; border-radius:12px; background:#4f8cff; color:white; font-weight:600; cursor:pointer; }
+    button:hover { filter: brightness(1.08); }
+    .result { margin-top: 20px; padding: 16px; background:#0e1726; border:1px solid #2a3955; border-radius:12px; }
+    .row { display:flex; gap:12px; align-items:center; }
+    .muted { color:#97a6ba; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Car Price Predictor</h1>
+    <p class="muted">Fill in the details below and click Predict. The model runs on a Flask API.</p>
+
+    <form id="car-form">
+      <div class="field">
+        <label for="Brand">Brand</label>
+        <select id="Brand" required></select>
+      </div>
+      <div class="field">
+        <label for="Model">Model</label>
+        <select id="Model" required></select>
+      </div>
+      <div class="field">
+        <label for="Year">Year</label>
+        <input id="Year" type="number" min="1990" max="2100" required />
+      </div>
+      <div class="field">
+        <label for="Engine">Engine (CC)</label>
+        <input id="Engine" type="number" min="600" max="6000" step="50" required />
+      </div>
+      <div class="field">
+        <label for="Kilometers">Kilometers</label>
+        <input id="Kilometers" type="number" min="0" step="1000" required />
+      </div>
+
+      <div class="field">
+        <label for="Fuel">Fuel</label>
+        <select id="Fuel" required></select>
+      </div>
+      <div class="field">
+        <label for="Trasmission">Transmission</label>
+        <select id="Trasmission" required></select>
+      </div>
+      <div class="field">
+        <label for="Body">Body</label>
+        <select id="Body" required></select>
+      </div>
+      <div class="field">
+        <label for="Color">Color</label>
+        <select id="Color" required></select>
+      </div>
+      <div class="field">
+        <label for="Gov">Governorate</label>
+        <select id="Gov" required></select>
+      </div>
+
+      <button type="submit">Predict</button>
+    </form>
+
+    <div class="result" id="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    async function fetchMeta() {
+      const r = await fetch('/meta');
+      const meta = await r.json();
+
+      // Populate selects
+      function fill(id, arr) {
+        const el = document.getElementById(id);
+        el.innerHTML = '';
+        arr.forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = v; opt.textContent = v; el.appendChild(opt);
+        });
+      }
+
+      fill('Brand', meta.brands);
+      fill('Model', meta.models);
+      fill('Fuel', meta.fuel_options);
+      fill('Trasmission', meta.transmission_options);
+      fill('Body', meta.body_options);
+      fill('Color', meta.color_options);
+      fill('Gov', meta.gov_options);
+
+      // Year default
+      document.getElementById('Year').value = meta.current_year;
+    }
+
+    async function predict(e) {
+      e.preventDefault();
+      const payload = {
+        Brand: document.getElementById('Brand').value,
+        Model: document.getElementById('Model').value,
+        Year: document.getElementById('Year').value,
+        Engine: document.getElementById('Engine').value,
+        Kilometers: document.getElementById('Kilometers').value,
+        Fuel: document.getElementById('Fuel').value,
+        Trasmission: document.getElementById('Trasmission').value,
+        Body: document.getElementById('Body').value,
+        Color: document.getElementById('Color').value,
+        Gov: document.getElementById('Gov').value
+      };
+
+      const resBox = document.getElementById('result');
+      resBox.style.display = 'block';
+      resBox.textContent = 'Predicting...';
+
+      try {
+        const r = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await r.json();
+        if (data.ok) {
+          // NOTE: If your target is in thousands, adjust the display wording below.
+          resBox.textContent = `Estimated Price: ${data.prediction.toFixed(2)}`;
+        } else {
+          resBox.textContent = 'Error: ' + (data.error || 'Unknown error');
+        }
+      } catch (err) {
+        resBox.textContent = 'Error: ' + err.message;
+      }
+    }
+
+    document.getElementById('car-form').addEventListener('submit', predict);
+    fetchMeta();
+  </script>
+</body>
+</html>
