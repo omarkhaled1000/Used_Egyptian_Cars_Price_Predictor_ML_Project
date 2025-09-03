@@ -12,6 +12,7 @@
     .field { display:flex; flex-direction:column; gap:6px; }
     label { font-size: 14px; color:#b8c7da; }
     input, select { padding:10px 12px; border-radius:10px; border:1px solid #2a3955; background:#0e1726; color:#e6eef7; }
+    select:disabled { opacity: 0.6; cursor: not-allowed; }
     button { grid-column: 1 / -1; padding: 12px 16px; border:0; border-radius:12px; background:#4f8cff; color:white; font-weight:600; cursor:pointer; }
     button:hover { filter: brightness(1.08); }
     .result { margin-top: 20px; padding: 16px; background:#0e1726; border:1px solid #2a3955; border-radius:12px; }
@@ -31,7 +32,9 @@
       </div>
       <div class="field">
         <label for="Model">Model</label>
-        <select id="Model" required></select>
+        <select id="Model" required>
+          <option value="">Select a brand first</option>
+        </select>
       </div>
       <div class="field">
         <label for="Year">Year</label>
@@ -74,9 +77,15 @@
   </div>
 
   <script>
+    let brandModelMapping = {};
+    
     async function fetchMeta() {
       const r = await fetch('/meta');
       const meta = await r.json();
+
+      // Store brand-model mapping
+      brandModelMapping = meta.brand_model_mapping || {};
+      console.log('Brand-model mapping loaded:', brandModelMapping);
 
       // Populate selects
       function fill(id, arr) {
@@ -98,6 +107,56 @@
 
       // Year default
       document.getElementById('Year').value = meta.current_year;
+      
+      // Add event listener for brand change
+      document.getElementById('Brand').addEventListener('change', updateModels);
+      
+      // Initialize models dropdown
+      updateModels();
+    }
+    
+    function updateModels() {
+      const brandSelect = document.getElementById('Brand');
+      const modelSelect = document.getElementById('Model');
+      const selectedBrand = brandSelect.value;
+      
+      console.log('Updating models for brand:', selectedBrand);
+      console.log('Available mapping:', brandModelMapping);
+      
+      // Clear current models
+      modelSelect.innerHTML = '';
+      
+      if (selectedBrand && brandModelMapping[selectedBrand]) {
+        console.log('Found models for brand:', brandModelMapping[selectedBrand]);
+        
+        // Enable model dropdown
+        modelSelect.disabled = false;
+        
+        // Add default option
+        const defaultOpt = document.createElement('option');
+        defaultOpt.value = '';
+        defaultOpt.textContent = 'Select a model';
+        modelSelect.appendChild(defaultOpt);
+        
+        // Add models for selected brand
+        brandModelMapping[selectedBrand].forEach(model => {
+          const opt = document.createElement('option');
+          opt.value = model;
+          opt.textContent = model;
+          modelSelect.appendChild(opt);
+        });
+      } else {
+        console.log('No models found for brand or no brand selected');
+        
+        // Disable model dropdown if no brand selected
+        modelSelect.disabled = true;
+        
+        // Show placeholder
+        const defaultOpt = document.createElement('option');
+        defaultOpt.value = '';
+        defaultOpt.textContent = 'Select a brand first';
+        modelSelect.appendChild(defaultOpt);
+      }
     }
 
     async function predict(e) {

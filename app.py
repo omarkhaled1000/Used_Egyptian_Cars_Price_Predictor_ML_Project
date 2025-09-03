@@ -27,6 +27,25 @@ gov_options = artifacts['gov_options']
 brand_index = {v: i for i, v in enumerate(brand_classes)}
 model_index = {v: i for i, v in enumerate(model_classes)}
 
+# Create brand-model mapping
+# Since models don't have brand prefixes, we'll create a mapping based on common knowledge
+# This is a simplified approach - in a real scenario, you'd want to load this from your training data
+brand_model_mapping = {
+    'Chevrolet': ['Cruze', 'Aveo', 'Lanos', 'Optra'],
+    'Fiat': ['128', '131', 'Punto', 'Tipo', 'Uno'],
+    'Hyundai': ['Accent', 'Avante', 'Elantra', 'Excel', 'I10', 'Tucson', 'Tucson GDI', 'Verna', 'Matrix', 'Shahin']
+}
+
+# Filter to only include models that actually exist in our model_classes
+filtered_brand_model_mapping = {}
+for brand, models in brand_model_mapping.items():
+    if brand in brand_classes:
+        filtered_models = [model for model in models if model in model_classes]
+        if filtered_models:
+            filtered_brand_model_mapping[brand] = filtered_models
+
+brand_model_mapping = filtered_brand_model_mapping
+
 # Helper: build a single-row feature vector in the exact training order
 # Input payload should contain raw fields: Brand, Model, Year, Fuel, Trasmission, Body, Color, Gov, Engine, Kilometers
 # We'll compute Car_Age = current_year - Year on the server for consistency.
@@ -108,8 +127,18 @@ def meta():
         'body_options': body_options,
         'color_options': color_options,
         'gov_options': gov_options,
-        'current_year': CURRENT_YEAR
+        'current_year': CURRENT_YEAR,
+        'brand_model_mapping': brand_model_mapping
     })
+
+
+@app.route('/models/<brand>', methods=['GET'])
+def get_models_for_brand(brand):
+    """Return models for a specific brand."""
+    if brand in brand_model_mapping:
+        return jsonify({'models': brand_model_mapping[brand]})
+    else:
+        return jsonify({'models': []})
 
 
 @app.route('/predict', methods=['POST'])
