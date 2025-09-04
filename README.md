@@ -1,4 +1,7 @@
 # 🚗 Car Price Prediction with Machine Learning
+## DATASET LICENSE
+This project uses the dataset [Used Cars Prices in Egypt]([Kaggle link](https://www.kaggle.com/datasets/yousifahmedanwar/used-cars-prices-in-egypt)), which is licensed under the GNU GPL v2.0.  
+The dataset is redistributed (if included) under the same license.  
 
 ## 📌 Project Overview
 This project predicts used car prices based on various features such as brand, model, year, mileage, fuel type, and more.  
