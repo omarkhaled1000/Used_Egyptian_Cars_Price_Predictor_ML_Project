@@ -50,5 +50,5 @@ Contributions are welcome! Please fork the repo and submit a pull request.
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/your-username/car-price-prediction.git
-cd car-price-prediction
+git clone https://github.com/omarkhaled1000/Cars-AMIT-Project.git
+cd Cars-AMIT-Project
