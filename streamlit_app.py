@@ -151,3 +151,8 @@ if st.button('Predict'):
             st.success(f"Estimated Price: {egp:,} EGP")
         except Exception as e:
             st.error(f'Error: {e}')
+
+# Footer notes
+st.markdown("---")
+st.caption("Dataset collected in May 2023.")
+st.caption("Made with love by Omar Khaled — All rights reserved 2025.")
