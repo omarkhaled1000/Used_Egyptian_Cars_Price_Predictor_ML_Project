@@ -186,8 +186,9 @@
         });
         const data = await r.json();
         if (data.ok) {
-          // NOTE: If your target is in thousands, adjust the display wording below.
-          resBox.textContent = `Estimated Price: ${data.prediction.toFixed(2)}`;
+          // Display full amount in EGP (model outputs thousands)
+          const egp = Math.round(data.prediction * 1000);
+          resBox.textContent = `Estimated Price: ${egp.toLocaleString('en-EG')} EGP`;
         } else {
           resBox.textContent = 'Error: ' + (data.error || 'Unknown error');
         }

@@ -130,7 +130,8 @@ if st.button('Predict'):
     with st.spinner('Predicting...'):
         try:
             X_row = build_features(payload)
-            pred = float(ml_model.predict(X_row)[0])
-            st.success(f'Estimated Price: {pred:.2f}')
+            pred_thousands = float(ml_model.predict(X_row)[0])
+            egp = int(round(pred_thousands * 1000))
+            st.success(f"Estimated Price: {egp:,} EGP")
         except Exception as e:
             st.error(f'Error: {e}')
