@@ -93,7 +93,22 @@
         el.innerHTML = '';
         arr.forEach(v => {
           const opt = document.createElement('option');
-          opt.value = v; opt.textContent = v; el.appendChild(opt);
+          opt.value = v;
+          // Friendly display without changing submitted value
+          if (id === 'Fuel') {
+            const txt = (typeof v === 'string' && v.toLowerCase() === 'gas') ? 'Fuel (Benzine/Petrol/Gasoline)'
+                      : (v === 'natural gas') ? 'Natural Gas'
+                      : v;
+            opt.textContent = txt;
+          } else if (id === 'Trasmission') {
+            const txt = (v === 'automatic') ? 'Automatic'
+                      : (v === 'manual') ? 'Manual'
+                      : v;
+            opt.textContent = txt;
+          } else {
+            opt.textContent = v;
+          }
+          el.appendChild(opt);
         });
       }
 

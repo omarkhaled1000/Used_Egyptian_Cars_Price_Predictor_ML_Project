@@ -101,9 +101,25 @@ kilometers = st.number_input('Kilometers', min_value=0, value=0, step=1000)
 
 col5, col6 = st.columns(2)
 with col5:
-    fuel = st.selectbox('Fuel', options=fuel_options)
+    def _fuel_label(v: str) -> str:
+        if isinstance(v, str) and v.lower() == 'gas':
+            return 'Fuel (Benzine/Petrol/Gasoline)'
+        if v == 'natural gas':
+            return 'Natural Gas'
+        return v
+    fuel_idx = 0 if len(fuel_options) == 0 else 0
+    fuel = st.selectbox('Fuel', options=list(range(len(fuel_options))), format_func=lambda i: _fuel_label(fuel_options[i]), index=fuel_idx if len(fuel_options) > 0 else None)
+    fuel = fuel_options[fuel] if len(fuel_options) > 0 else ''
 with col6:
-    transmission = st.selectbox('Transmission', options=transmission_options)
+    def _trans_label(v: str) -> str:
+        if v == 'automatic':
+            return 'Automatic'
+        if v == 'manual':
+            return 'Manual'
+        return v
+    trans_idx = 0 if len(transmission_options) == 0 else 0
+    transmission = st.selectbox('Transmission', options=list(range(len(transmission_options))), format_func=lambda i: _trans_label(transmission_options[i]), index=trans_idx if len(transmission_options) > 0 else None)
+    transmission = transmission_options[transmission] if len(transmission_options) > 0 else ''
 
 col7, col8 = st.columns(2)
 with col7:
