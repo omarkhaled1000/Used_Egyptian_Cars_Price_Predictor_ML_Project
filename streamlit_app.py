@@ -5,8 +5,8 @@ import pandas as pd
 import streamlit as st
 
 # === Load artifacts ===
-MODEL_PATH = Path('xgboost_car_price_model.pkl')
-ARTIFACTS_PATH = Path('artifacts.joblib')
+MODEL_PATH = Path('Model/xgboost_car_price_model.pkl')
+ARTIFACTS_PATH = Path('Model/artifacts.joblib')
 
 model = joblib.load(MODEL_PATH)
 artifacts = joblib.load(ARTIFACTS_PATH)

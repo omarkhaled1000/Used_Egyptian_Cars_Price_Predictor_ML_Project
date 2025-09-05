@@ -7,8 +7,8 @@ from pathlib import Path
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
 # === Load artifacts ===
-MODEL_PATH = Path('xgboost_car_price_model.pkl')
-ARTIFACTS_PATH = Path('artifacts.joblib')
+MODEL_PATH = Path('Model/xgboost_car_price_model.pkl')
+ARTIFACTS_PATH = Path('Model/artifacts.joblib')
 
 model = joblib.load(MODEL_PATH)
 artifacts = joblib.load(ARTIFACTS_PATH)
