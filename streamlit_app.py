@@ -8,7 +8,7 @@ import streamlit as st
 MODEL_PATH = Path('Model/xgboost_car_price_model.pkl')
 ARTIFACTS_PATH = Path('Model/artifacts.joblib')
 
-model = joblib.load(MODEL_PATH)
+ml_model = joblib.load(MODEL_PATH)
 artifacts = joblib.load(ARTIFACTS_PATH)
 
 brand_classes = artifacts['brand_classes']
@@ -89,7 +89,7 @@ with col1:
 with col2:
     # Filter models by selected brand
     models_for_brand = brand_model_mapping.get(brand, model_classes)
-    model = st.selectbox('Model', options=models_for_brand, index=0 if len(models_for_brand) > 0 else None)
+    selected_model = st.selectbox('Model', options=models_for_brand, index=0 if len(models_for_brand) > 0 else None)
 
 col3, col4 = st.columns(2)
 with col3:
@@ -116,7 +116,7 @@ gov = st.selectbox('Governorate', options=gov_options)
 if st.button('Predict'):
     payload = {
         'Brand': brand,
-        'Model': model,
+        'Model': selected_model,
         'Year': year,
         'Engine': engine,
         'Kilometers': kilometers,
@@ -130,7 +130,7 @@ if st.button('Predict'):
     with st.spinner('Predicting...'):
         try:
             X_row = build_features(payload)
-            pred = float(model.predict(X_row)[0])
+            pred = float(ml_model.predict(X_row)[0])
             st.success(f'Estimated Price: {pred:.2f}')
         except Exception as e:
             st.error(f'Error: {e}')
