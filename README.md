@@ -45,20 +45,20 @@ Cars-AMIT-Project/
 
 ## ⚙️ Installation and Usage
 
-### 🔹 Run Locally (Flask App)
+## Run Locally (Flask App)
 1. Clone the repository:
    ```bash
    git clone https://github.com/omarkhaled1000/Cars-AMIT-Project.git
    cd Cars-AMIT-Project
-Install dependencies:
+2. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
-Run the Flask app:
+3. Run the Flask app:
 ```bash
 python app.py
 ```
-Open your browser at: http://127.0.0.1:5000/
+4. Open your browser at: http://127.0.0.1:5000/
 
  
 ## ⚙ Run Online (Streamlit App)
