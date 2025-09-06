@@ -81,9 +81,9 @@ Final Model: Tuned XGBoost Regressor with optimized hyperparameters.
 ## 📊 Model Performance
 
 Best Model: Tuned XGBoost
-MAE: ~12.4
-RMSE: ~20.3
-R²: ~0.93
+MAE: 12.52
+RMSE: 20.32
+R²: 0.94
 
 ## 🤝 Contributing
 Contributions are welcome! Please fork the repo and submit a pull request.
