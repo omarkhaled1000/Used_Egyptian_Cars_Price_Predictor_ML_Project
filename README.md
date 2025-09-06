@@ -39,8 +39,7 @@ Cars-AMIT-Project/
 ├── templates/
 │ └── index.html # Frontend for Flask app
 └── pycache/ # Python cache files (auto-generated)
-
-
+`
 ---
 
 ## ⚙️ Installation and Usage
