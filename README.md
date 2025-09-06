@@ -64,7 +64,7 @@ python app.py
 
 Go to the deployed Streamlit app:
 👉 Live Demo on Streamlit
- (https://usedegyptiancarspricepredictormlproject-kmgufbpp7t5oegp574tyax.streamlit.app/)
+ (https://usedegyptiancarspricepredictormlproject-jad8l6ycdrpleqrppwy49y.streamlit.app/)
 You can enter car details in the sidebar form.
 Get instant price predictions in the browser.
 
