@@ -44,7 +44,7 @@ Cars-AMIT-Project/
 
 ## ⚙️ Installation and Usage
 
-## Run Locally (Flask App)
+### ⚙ Run Locally (Flask App)
 1. Clone the repository:
    ```bash
    git clone https://github.com/omarkhaled1000/Used_Egyptian_Cars_Price_Predictor_ML_Project.git
@@ -60,7 +60,7 @@ python app.py
 4. Open your browser at: http://127.0.0.1:5000/
 
  
-## ⚙ Run Online (Streamlit App)
+### ⚙ Run Online (Streamlit App)
 
 Go to the deployed Streamlit app:
 👉 Live Demo on Streamlit
