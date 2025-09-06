@@ -24,7 +24,7 @@ It also provides two ways to interact with the trained model:
 - Deployment with Flask + HTML frontend  
 
 ---
-
+```
 ## 🗂 Project Structure
 Cars-AMIT-Project/
 ├── app.py # Flask backend for local deployment
@@ -39,7 +39,7 @@ Cars-AMIT-Project/
 ├── templates/
 │ └── index.html # Frontend for Flask app
 └── pycache/ # Python cache files (auto-generated)
-`
+```
 ---
 
 ## ⚙️ Installation and Usage
