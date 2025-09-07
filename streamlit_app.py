@@ -79,8 +79,8 @@ def build_features(payload: dict) -> pd.DataFrame:
 
 
 # === UI ===
-st.set_page_config(page_title='Car Price Predictor', page_icon='🚗', layout='centered')
-st.title('Car Price Predictor')
+st.set_page_config(page_title='Teswakam?', page_icon='🚗', layout='centered')
+st.title('Teswakam?')
 st.caption('Fill in the details and click Predict. Powered by an XGBoost model.')
 
 col1, col2 = st.columns(2)
