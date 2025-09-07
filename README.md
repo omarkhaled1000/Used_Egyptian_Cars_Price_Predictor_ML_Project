@@ -64,7 +64,7 @@ python app.py
 
 Go to the deployed Streamlit app:
 👉 Live Demo on Streamlit
- (https://usedegyptiancarspricepredictormlproject-kmgufbpp7t5oegp574tyax.streamlit.app/)
+ (https://usedegyptiancarspricepredictormlproject-jad8l6ycdrpleqrppwy49y.streamlit.app/)
 You can enter car details in the sidebar form.
 Get instant price predictions in the browser.
 
@@ -81,9 +81,9 @@ Final Model: Tuned XGBoost Regressor with optimized hyperparameters.
 ## 📊 Model Performance
 
 Best Model: Tuned XGBoost
-MAE: ~12.4
-RMSE: ~20.3
-R²: ~0.93
+MAE: 12.52
+RMSE: 20.32
+R²: 0.94
 
 ## 🤝 Contributing
 Contributions are welcome! Please fork the repo and submit a pull request.
