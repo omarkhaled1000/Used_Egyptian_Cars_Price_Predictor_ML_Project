@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Car Price Predictor</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:#0b1220; color:#e6eef7; margin:0; }
+    .container { max-width: 900px; margin: 40px auto; padding: 24px; background:#121a2a; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    h1 { margin-top:0; }
+    form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .field { display:flex; flex-direction:column; gap:6px; }
+    label { font-size: 14px; color:#b8c7da; }
+    input, select { padding:10px 12px; border-radius:10px; border:1px solid #2a3955; background:#0e1726; color:#e6eef7; }
+    select:disabled { opacity: 0.6; cursor: not-allowed; }
+    button { grid-column: 1 / -1; padding: 12px 16px; border:0; border-radius:12px; background:#4f8cff; color:white; font-weight:600; cursor:pointer; }
+    button:hover { filter: brightness(1.08); }
+    .result { margin-top: 20px; padding: 16px; background:#0e1726; border:1px solid #2a3955; border-radius:12px; }
+    .row { display:flex; gap:12px; align-items:center; }
+    .muted { color:#97a6ba; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Car Price Predictor</h1>
+    <p class="muted">Fill in the details below and click Predict. The model runs on a Flask API.</p>
+
+    <form id="car-form">
+      <div class="field">
+        <label for="Brand">Brand</label>
+        <select id="Brand" required></select>
+      </div>
+      <div class="field">
+        <label for="Model">Model</label>
+        <select id="Model" required>
+          <option value="">Select a brand first</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="Year">Year</label>
+        <input id="Year" type="number" min="1990" max="2100" required />
+      </div>
+      <div class="field">
+        <label for="Engine">Engine (CC)</label>
+        <input id="Engine" type="number" min="600" max="6000" step="50" required />
+      </div>
+      <div class="field">
+        <label for="Kilometers">Kilometers</label>
+        <input id="Kilometers" type="number" min="0" step="1000" required />
+      </div>
+
+      <div class="field">
+        <label for="Fuel">Fuel</label>
+        <select id="Fuel" required></select>
+      </div>
+      <div class="field">
+        <label for="Trasmission">Transmission</label>
+        <select id="Trasmission" required></select>
+      </div>
+      <div class="field">
+        <label for="Body">Body</label>
+        <select id="Body" required></select>
+      </div>
+      <div class="field">
+        <label for="Color">Color</label>
+        <select id="Color" required></select>
+      </div>
+      <div class="field">
+        <label for="Gov">Governorate</label>
+        <select id="Gov" required></select>
+      </div>
+
+      <button type="submit">Predict</button>
+    </form>
+
+    <div class="result" id="result" style="display:none;"></div>
+  </div>
+
+  <div class="container" style="margin-top: 12px;">
+    <p class="muted">Dataset collected in May 2023.</p>
+    <p class="muted">Made with love by Omar Khaled — All rights reserved 2025.</p>
+  </div>
+
+  <script>
+    let brandModelMapping = {};
+    
+    async function fetchMeta() {
+      const r = await fetch('/meta');
+      const meta = await r.json();
+
+      // Store brand-model mapping
+      brandModelMapping = meta.brand_model_mapping || {};
+      console.log('Brand-model mapping loaded:', brandModelMapping);
+
+      // Populate selects
+      function fill(id, arr) {
+        const el = document.getElementById(id);
+        el.innerHTML = '';
+        arr.forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = v;
+          // Friendly display without changing submitted value
+          if (id === 'Fuel') {
+            const txt = (typeof v === 'string' && v.toLowerCase() === 'gas') ? 'Fuel (Benzine/Petrol/Gasoline)'
+                      : (v === 'natural gas') ? 'Natural Gas'
+                      : v;
+            opt.textContent = txt;
+          } else if (id === 'Trasmission') {
+            const txt = (v === 'automatic') ? 'Automatic'
+                      : (v === 'manual') ? 'Manual'
+                      : v;
+            opt.textContent = txt;
+          } else {
+            opt.textContent = v;
+          }
+          el.appendChild(opt);
+        });
+      }
+
+      fill('Brand', meta.brands);
+      fill('Model', meta.models);
+      fill('Fuel', meta.fuel_options);
+      fill('Trasmission', meta.transmission_options);
+      fill('Body', meta.body_options);
+      fill('Color', meta.color_options);
+      fill('Gov', meta.gov_options);
+
+      // Year default
+      document.getElementById('Year').value = meta.current_year;
+      
+      // Add event listener for brand change
+      document.getElementById('Brand').addEventListener('change', updateModels);
+      
+      // Initialize models dropdown
+      updateModels();
+    }
+    
+    function updateModels() {
+      const brandSelect = document.getElementById('Brand');
+      const modelSelect = document.getElementById('Model');
+      const selectedBrand = brandSelect.value;
+      
+      console.log('Updating models for brand:', selectedBrand);
+      console.log('Available mapping:', brandModelMapping);
+      
+      // Clear current models
+      modelSelect.innerHTML = '';
+      
+      if (selectedBrand && brandModelMapping[selectedBrand]) {
+        console.log('Found models for brand:', brandModelMapping[selectedBrand]);
+        
+        // Enable model dropdown
+        modelSelect.disabled = false;
+        
+        // Add default option
+        const defaultOpt = document.createElement('option');
+        defaultOpt.value = '';
+        defaultOpt.textContent = 'Select a model';
+        modelSelect.appendChild(defaultOpt);
+        
+        // Add models for selected brand
+        brandModelMapping[selectedBrand].forEach(model => {
+          const opt = document.createElement('option');
+          opt.value = model;
+          opt.textContent = model;
+          modelSelect.appendChild(opt);
+        });
+      } else {
+        console.log('No models found for brand or no brand selected');
+        
+        // Disable model dropdown if no brand selected
+        modelSelect.disabled = true;
+        
+        // Show placeholder
+        const defaultOpt = document.createElement('option');
+        defaultOpt.value = '';
+        defaultOpt.textContent = 'Select a brand first';
+        modelSelect.appendChild(defaultOpt);
+      }
+    }
+
+    async function predict(e) {
+      e.preventDefault();
+      const payload = {
+        Brand: document.getElementById('Brand').value,
+        Model: document.getElementById('Model').value,
+        Year: document.getElementById('Year').value,
+        Engine: document.getElementById('Engine').value,
+        Kilometers: document.getElementById('Kilometers').value,
+        Fuel: document.getElementById('Fuel').value,
+        Trasmission: document.getElementById('Trasmission').value,
+        Body: document.getElementById('Body').value,
+        Color: document.getElementById('Color').value,
+        Gov: document.getElementById('Gov').value
+      };
+
+      const resBox = document.getElementById('result');
+      resBox.style.display = 'block';
+      resBox.textContent = 'Predicting...';
+
+      try {
+        const r = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await r.json();
+        if (data.ok) {
+          // Display full amount in EGP (model outputs thousands)
+          const egp = Math.round(data.prediction * 1000);
+          resBox.textContent = `Estimated Price: ${egp.toLocaleString('en-EG')} EGP`;
+        } else {
+          resBox.textContent = 'Error: ' + (data.error || 'Unknown error');
+        }
+      } catch (err) {
+        resBox.textContent = 'Error: ' + err.message;
+      }
+    }
+
+    document.getElementById('car-form').addEventListener('submit', predict);
+    fetchMeta();
+  </script>
+</body>
+</html>
