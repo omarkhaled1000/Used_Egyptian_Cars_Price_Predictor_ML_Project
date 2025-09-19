@@ -46,9 +46,10 @@ Cars-AMIT-Project/
 
 ### ⚙ Run Locally (Flask App)
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/omarkhaled1000/Used_Egyptian_Cars_Price_Predictor_ML_Project.git
-   cd Cars-AMIT-Project
+```bash
+git clone https://github.com/omarkhaled1000/Used_Egyptian_Cars_Price_Predictor_ML_Project.git
+cd Cars-AMIT-Project
+```
 2. Install dependencies:
 ```bash
 pip install -r requirements.txt
